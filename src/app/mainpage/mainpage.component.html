@@ -1,0 +1,22 @@
+<div class="main-actions">
+  <button mat-raised-button color="warn" (click)="resign()" class="resign-btn">
+    Resign
+  </button>
+</div>
+
+<div class="mainpage-center">
+  <iframe
+    #iframe1
+    class="chess-iframe iframe1"
+    src="/iframepage?player=white"
+    title="Iframe 1"
+    scrolling="no"
+    frameborder="0"></iframe>
+  <iframe
+    #iframe2
+    class="chess-iframe iframe2"
+    src="/iframepage?player=black"
+    title="Iframe 2"
+    scrolling="no"
+    frameborder="0"></iframe>
+</div>

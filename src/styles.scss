@@ -1,1 +1,56 @@
 /* You can add global styles to this file, and also import other style files */
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+body {
+  background: url("/assets/phpif1r0K.jpeg") no-repeat center center fixed;
+  background-size: cover;
+}
+
+
+.mat-mdc-snack-bar-container {
+  min-width: unset !important;
+  max-width: 360px !important;
+  width: auto !important;
+  border-radius: 10px !important;
+  box-shadow: 0 2px 16px #0003;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 0 20px !important;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__label {
+  width: 100%;
+  text-align: center;
+  font-size: 1.12rem;
+  font-weight: bold;
+  padding: 8px 0 !important;
+}
+
+.snack-check {
+  background: #ffeb3b !important;
+  color: #333 !important;
+}
+.snack-win {
+  background: #43a047 !important;
+  color: #fff !important;
+}
+
+
+.mat-mdc-snack-bar-container {
+  top: 24px !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  position: fixed !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 1300 !important;
+}
+

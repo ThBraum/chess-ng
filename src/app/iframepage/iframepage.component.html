@@ -1,0 +1,22 @@
+<div class="iframepage-container" [ngStyle]="{'background': bgColor}">
+  <div class="iframe-label"><strong>{{ player === 'white' ? 'Iframe 1' :
+      'Iframe 2' }}</strong></div>
+  <div class="chessboard-wrapper">
+    <ngx-chess-board
+      #board
+      [size]="320"
+      [darkTileColor]="'#e94c4c'"
+      [lightTileColor]="'#ecd69a'"
+      [freeMode]="false"
+      (moveChange)="onMove($event)">
+    </ngx-chess-board>
+    <div *ngIf="disabled" class="board-overlay"></div>
+  </div>
+  <div class="main-actions">
+    <!-- <button mat-raised-button color="primary" (click)="reset()"
+      class="reset-btn">
+      <span class="material-icons reset-icon">refresh</span>
+      Create New Game
+    </button> -->
+  </div>
+</div>
