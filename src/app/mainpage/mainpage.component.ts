@@ -19,7 +19,6 @@ export class MainpageComponent implements AfterViewInit {
   handleMessage(event: MessageEvent) {
     if (!event.data) return;
 
-    // MIRRORED MOVE HANDLING: always sync via FEN
     if (event.data.type === 'move') {
       const { player } = event.data;
       this.currentTurn = player === 'white' ? 'black' : 'white';
@@ -27,39 +26,54 @@ export class MainpageComponent implements AfterViewInit {
       const sourceIframe = player === 'white' ? this.iframe1 : this.iframe2;
       const targetIframe = player === 'white' ? this.iframe2 : this.iframe1;
 
-      sourceIframe.nativeElement.contentWindow?.postMessage({ type: 'getFEN' }, '*');
+      sourceIframe.nativeElement.contentWindow?.postMessage(
+        { type: 'getFEN' },
+        '*'
+      );
 
       const fenHandler = (evt: MessageEvent) => {
         if (evt.data && evt.data.type === 'fen') {
-          // Mirror the full board state
-          targetIframe.nativeElement.contentWindow?.postMessage(
-            { type: 'setFEN', fen: evt.data.fen, disabled: false },
+          this.iframe1.nativeElement.contentWindow?.postMessage(
+            {
+              type: 'setFEN',
+              fen: evt.data.fen,
+              disabled: this.currentTurn !== 'white',
+              orientation: 0,
+            },
             '*'
           );
-          // Lock source board
+          this.iframe2.nativeElement.contentWindow?.postMessage(
+            {
+              type: 'setFEN',
+              fen: evt.data.fen,
+              disabled: this.currentTurn !== 'black',
+              orientation: 180,
+            },
+            '*'
+          );
           sourceIframe.nativeElement.contentWindow?.postMessage(
             { type: 'lock', disabled: true },
             '*'
           );
-          // Enable target board
           targetIframe.nativeElement.contentWindow?.postMessage(
             { type: 'lock', disabled: false },
             '*'
           );
           localStorage.setItem('chess_fen', evt.data.fen);
           localStorage.setItem('chess_turn', this.currentTurn);
-          this.checkGameOver(evt.data.fen);
+
+          setTimeout(() => this.checkGameOver(evt.data.fen), 30); // use delay p/ garantir render ciclo Angular
         }
       };
       window.addEventListener('message', fenHandler, { once: true });
     }
 
-    // For restoring and resign
-    if (event.data.type === 'fen') {}
-
     if (event.data.type === 'status') {
+      console.log('[parent] Received status:', event.data.status);
       if (event.data.status === 'checkmate') {
-        this.announceGameOver(`Checkmate! ${this.currentTurn === 'white' ? 'Black' : 'White'} wins.`);
+        this.announceGameOver(
+          `Checkmate! ${this.currentTurn === 'white' ? 'Black' : 'White'} wins.`
+        );
       } else if (event.data.status === 'stalemate') {
         this.announceGameOver('Draw by stalemate!');
       }
@@ -67,21 +81,50 @@ export class MainpageComponent implements AfterViewInit {
   }
 
   checkGameOver(fen: string) {
-    // Ask one of the iframes for game status using the latest FEN
-    this.iframe1.nativeElement.contentWindow?.postMessage({ type: 'checkStatusWithFEN', fen }, '*');
+    this.iframe1.nativeElement.contentWindow?.postMessage(
+      { type: 'checkStatusWithFEN', fen },
+      '*'
+    );
   }
 
   announceGameOver(message: string) {
-    this.iframe1.nativeElement.contentWindow?.postMessage({ type: 'gameover', message }, '*');
-    this.iframe2.nativeElement.contentWindow?.postMessage({ type: 'gameover', message }, '*');
+    this.iframe1.nativeElement.contentWindow?.postMessage(
+      { type: 'gameover', message },
+      '*'
+    );
+    this.iframe2.nativeElement.contentWindow?.postMessage(
+      { type: 'gameover', message },
+      '*'
+    );
     setTimeout(() => alert(message), 200);
     this.clearGame();
   }
 
   resign() {
-    this.iframe1.nativeElement.contentWindow?.postMessage({ type: 'resigned' }, '*');
-    this.iframe2.nativeElement.contentWindow?.postMessage({ type: 'resigned' }, '*');
+    this.iframe1.nativeElement.contentWindow?.postMessage(
+      { type: 'resigned' },
+      '*'
+    );
+    this.iframe2.nativeElement.contentWindow?.postMessage(
+      { type: 'resigned' },
+      '*'
+    );
     this.clearGame();
+    setTimeout(() => {
+      const initialFEN =
+        'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+      this.iframe1.nativeElement.contentWindow?.postMessage(
+        { type: 'setFEN', fen: initialFEN, disabled: false, orientation: 0 },
+        '*'
+      );
+      this.iframe2.nativeElement.contentWindow?.postMessage(
+        { type: 'setFEN', fen: initialFEN, disabled: true, orientation: 180 },
+        '*'
+      );
+      localStorage.setItem('chess_fen', initialFEN);
+      localStorage.setItem('chess_turn', 'white');
+      this.currentTurn = 'white';
+    }, 150);
   }
 
   restoreGame() {
@@ -89,11 +132,11 @@ export class MainpageComponent implements AfterViewInit {
     const turn = localStorage.getItem('chess_turn') as 'white' | 'black' | null;
     if (fen && turn) {
       this.iframe1.nativeElement.contentWindow?.postMessage(
-        { type: 'setFEN', fen, disabled: turn !== 'white' },
+        { type: 'setFEN', fen, disabled: turn !== 'white', orientation: 0 },
         '*'
       );
       this.iframe2.nativeElement.contentWindow?.postMessage(
-        { type: 'setFEN', fen, disabled: turn !== 'black' },
+        { type: 'setFEN', fen, disabled: turn !== 'black', orientation: 180 },
         '*'
       );
       this.currentTurn = turn;

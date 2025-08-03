@@ -8,15 +8,13 @@
       [darkTileColor]="'#e94c4c'"
       [lightTileColor]="'#ecd69a'"
       [freeMode]="false"
-      (moveChange)="onMove($event)">
+      (moveChange)="onMove($event)"
+      (checkmate)="onCheckmate()"
+      (stalemate)="onStalemate()">
     </ngx-chess-board>
     <div *ngIf="disabled" class="board-overlay"></div>
   </div>
-  <div class="main-actions">
-    <!-- <button mat-raised-button color="primary" (click)="reset()"
-      class="reset-btn">
-      <span class="material-icons reset-icon">refresh</span>
-      Create New Game
-    </button> -->
+  <div *ngIf="gameOverMessage" class="restart-btn-wrapper">
+    <button class="reset-btn" (click)="reset()">Create new game</button>
   </div>
 </div>
