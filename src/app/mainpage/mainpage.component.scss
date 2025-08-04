@@ -16,6 +16,30 @@
   justify-content: center;
   align-items: flex-start;
 }
+
+@media screen and (max-width: 768px) {
+  .mainpage-center {
+    display: flex;
+    gap: 48px;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    width: 100vw;
+    padding-bottom: 16px;
+
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: #979797 #ececec;
+    gap: 20px;
+  }
+
+  .chess-iframe {
+    min-width: 365px;
+    max-width: 94vw;
+  }
+}
+
 .player-indicator {
   display: flex;
   flex-direction: column;
@@ -34,13 +58,14 @@
   color: #333;
 }
 @keyframes bounce {
-  to { transform: translateY(-10px); }
+  to {
+    transform: translateY(-10px);
+  }
 }
 .chess-iframe {
   border-radius: 18px;
   box-shadow: 0 4px 20px #0002;
 }
-
 
 .chess-iframe {
   width: 400px;
