@@ -14,7 +14,7 @@
     </ngx-chess-board>
     <div *ngIf="disabled" class="board-overlay"></div>
   </div>
-  <div *ngIf="gameOverMessage" class="restart-btn-wrapper">
+  <div *ngIf="showNewGameButton" class="restart-btn-wrapper">
     <button class="reset-btn" (click)="reset()">Create new game</button>
   </div>
 </div>

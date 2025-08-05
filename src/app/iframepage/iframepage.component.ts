@@ -16,6 +16,7 @@ export class IframepageComponent implements OnInit {
   bgColor = '#fce5cd';
   private rotated = false;
   gameOverMessage: string | null = null;
+  showNewGameButton = false;
   private chess = new Chess();
 
   ngOnInit() {
@@ -62,7 +63,12 @@ export class IframepageComponent implements OnInit {
       }
       if (event.data.type === 'gameover') {
         this.gameOverMessage = event.data.message;
+        this.showNewGameButton = true;
         this.disabled = true;
+      }
+      if (event.data.type === 'hideNewGameButton') {
+        this.showNewGameButton = false;
+        this.gameOverMessage = null;
       }
     });
   }
@@ -87,7 +93,11 @@ export class IframepageComponent implements OnInit {
 
   reset() {
     this.gameOverMessage = null;
-    window.parent.postMessage({ type: 'resigned' }, '*');
+    this.showNewGameButton = false;
+    this.disabled = this.player === 'black';
+    this.board.reset();
+    this.chess.reset();
+    window.parent.postMessage({ type: 'newgame' }, '*');
   }
 
   onCheckmate() {

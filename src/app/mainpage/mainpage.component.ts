@@ -62,7 +62,7 @@ export class MainpageComponent implements AfterViewInit {
           localStorage.setItem('chess_fen', evt.data.fen);
           localStorage.setItem('chess_turn', this.currentTurn);
 
-          setTimeout(() => this.checkGameOver(evt.data.fen), 30); // use delay p/ garantir render ciclo Angular
+          setTimeout(() => this.checkGameOver(evt.data.fen), 30);
         }
       };
       window.addEventListener('message', fenHandler, { once: true });
@@ -77,6 +77,18 @@ export class MainpageComponent implements AfterViewInit {
       } else if (event.data.status === 'stalemate') {
         this.announceGameOver('Draw by stalemate!');
       }
+    }
+
+    if (event.data.type === "newgame") {
+      this.iframe1.nativeElement.contentWindow?.postMessage(
+        { type: 'hideNewGameButton' },
+        '*'
+      );
+      this.iframe2.nativeElement.contentWindow?.postMessage(
+        { type: 'hideNewGameButton' },
+        '*'
+      );
+      this.resign();
     }
   }
 
@@ -96,7 +108,6 @@ export class MainpageComponent implements AfterViewInit {
       { type: 'gameover', message },
       '*'
     );
-    setTimeout(() => alert(message), 200);
     this.clearGame();
   }
 
